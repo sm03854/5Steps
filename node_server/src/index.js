@@ -74,6 +74,6 @@ app.get("/api/", (req, res) =>
 
 //#region Server Connection
 
-app.listen(port, ip, () => console.log(`Backend node server listening on http://${ip}:${port}`));
+app.listen(port, "0.0.0.0", () => console.log(`Backend node server listening on http://${ip}:${port}`));
 
 //#endregion
