@@ -1,0 +1,46 @@
+.sign-up-image-container{
+    flex: 1;
+    display: flex;
+    justify-content: flex-start;
+    padding: 20px;
+}
+
+.sign-up-image{
+    max-width: 700px;
+    width: 100%;
+    height: auto;
+    border-radius: 20px;
+}
+
+
+.sign-up-card{
+    background-color: #FDF1AD;
+    padding: 20px 30px;
+    max-width: 700px;
+    width: 100%;
+    margin: auto;
+    border-radius: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column; /* This stacks children, the Log In text vertically */
+    justify-content: center;
+}
+
+.sign-up-wrapper{
+    min-height: 90vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* background-color: #F6F6F6; */
+    padding-top: 100px;
+    padding-right: 40px; /* Added padding-right to move the sign up box to the left */
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+.sign-up-title {
+    margin-bottom: 1.5rem;
+    /* Just another way to make it bold that I have found and used here */
+    font-weight: 700;
+    font-size: 2rem;
+}

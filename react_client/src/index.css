@@ -1,0 +1,69 @@
+/* Import for the font */
+@import url('https://fonts.googleapis.com/css2?family=Cambo&display=swap');
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Cambo", serif;
+}
+
+body, html{
+    background: #F6F6F6;
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    /* Adding this to prevent any overflows and causing the horizontal scroll bar to appear */
+    overflow-x: hidden;
+}
+
+a{
+    text-decoration: none;
+    color: inherit;
+    line-height: 1.5;
+    cursor: pointer;
+}
+
+.main-content{
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    /* This leaves the footer on the floor instead of pushing all the way up next to nav bar */
+    min-height: 100vh;
+    /* I have added these two because things normally got stuck under the navigation bar or the footer would push all the way up */
+    padding-top: 70px; /* [Keeping for Now] Removed this, will just add in each page individually because content seems to get stuck above the nav bar */
+    padding-bottom: 0px;
+}
+
+.phaser-container {
+    margin-top: 70px; /* pushes game below navbar */
+    position: relative;
+    z-index: 1;
+}
+
+/*
+Putting this in the index.css as the container is used in most if not all components created
+*/
+.container{
+    padding-left: 10%;
+    padding-right: 10%;
+}
+/*
+Log in button css
+*/
+.login-button{
+    background: #558CAD;
+    color: #F6F6F6;
+    /* border: 2px solid #868174; */
+    padding: 10px 25px;
+    border-radius: 30px;
+    cursor: pointer;
+    border: 0;
+    outline: 0;
+    font-size: 20px;
+    transition: background-color 0.3s, color 0.3s, border-color 0.3s, transform 0.3s;
+}
+.login-button:hover {
+    background-color: #2D6F96;
+    transform: scale(1.05);
+}

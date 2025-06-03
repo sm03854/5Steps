@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Register a new admin</title>
+ </head>
+  <body>
+    <h1>Enter details for your new admin account:</h1>
+    <form action="/api/users/admins/new/" method="POST">
+      <label for="firstName">First Name: </label>
+      <input type='text' id='firstName' name="firstName" placeholder="Enter your first name..">
+      <br><br>
+
+      <label for="lastName">Last Name: </label>
+      <input type='text' id='lastName' name="lastName" placeholder="Enter your last name..">
+      <br><br>
+
+      <label for="DOB">Date of Birth: </label>
+      <input type='date' id='DOB' name="DOB">
+      <br><br>
+
+      <label for="gender">Gender: </label>
+      <select id="gender" name="gender">
+        <option value="Male">Male</option>
+        <option value="Female">Female</option>
+      </select>
+      <br><br>
+
+      <label for="email">Email: </label>
+      <input type='email' id='email' name="email" placeholder="Enter your email..">
+      <br><br>
+
+      <label for="password">Password: </label>
+      <input type='password' id='password' name="password" placeholder="Enter your password..">
+      <br><br>
+
+      <button type="submit">Create new account</button>
+    </form>
+  </body>
+</html>

@@ -1,0 +1,55 @@
+.navbar-container{
+    width: 100%;
+    height: 100px;
+    /*Background color*/
+    background: #F1EFEB;
+    /*Text Colour*/
+    color: #868174;
+    /*Padding*/
+    padding: 4px 0;
+    /*Positioning*/
+    position: fixed;
+    top: 0;
+    left: 0;
+    /*This allows us to align content side by side */
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    /* This will overlap the elements on the web page when scrolling */
+    z-index: 10;
+}
+
+/* This is the logo on the left side of the navbar */
+.logo{
+    width: 120px;
+    padding-left: 40px;
+    /* width: 90px; */
+    /* height: 150px; Didn't need this whilst testing */
+}
+
+/* This is for the buttons on the nav bar, excluding the login button */
+.navigation-buttons{
+    background: none;
+    border: 2px solid #868174;
+    color: #868174;
+    padding: 10px 25px;
+    border-radius: 30px;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    /* outline: 30px; */
+    font-size: 20px;
+    transition: background-color 0.3s, color 0.3s, border-color 0.3s, transform 0.3s;
+}
+.navigation-buttons:hover {
+    background-color: #536887;
+    color: #DDDDDD;
+    transform: scale(1.05);
+}
+
+nav ul li {
+    display: inline-block;
+    list-style: none;
+    margin: 5px 20px;
+    font-size: 20px;
+}

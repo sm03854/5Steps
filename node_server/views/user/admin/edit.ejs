@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Edit admin</title>
+ </head>
+  <body>
+    <h1>Edit details for your admin account:</h1>
+    <form action="/api/users/admins/<%= id %>/edit/" method="POST">
+      <label for="firstName">First Name: </label>
+      <input type='text' id='firstName' name="firstName" value="<%= firstName %>" placeholder="Enter your first name..">
+      <br><br>
+
+      <label for="lastName">Last Name: </label>
+      <input type='text' id='lastName' name="lastName" value="<%= lastName %>" placeholder="Enter your last name..">
+      <br><br>
+      
+      <label for="DOB">Date of Birth: </label>
+      <input type='date' id='DOB' value="<%= DOB %>" name="DOB">
+      <br><br>
+
+      <label for="gender">Gender: </label>
+      <select id="gender" name="gender">
+        <option value="Male" <%= gender === 'Male' ? 'selected' : '' %>>Male</option>
+        <option value="Female" <%= gender === 'Female' ? 'selected' : '' %>>Female</option>
+      </select>
+      <br><br>
+
+      <label for="email">Email: </label>
+      <input type='email' id='email' name="email" value="<%= email %>" placeholder="Enter your email..">
+      <br><br>
+
+      <label for="password">Password: </label>
+      <input type='password' id='password' name="password" placeholder="Enter your password..">
+      <br><br>
+
+      <button type="submit">Update account details</button>
+    </form>
+  </body>
+</html>

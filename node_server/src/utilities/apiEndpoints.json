@@ -1,0 +1,65 @@
+{
+    "Home":
+    {
+        "/api/":
+        {
+            "method" : "GET",
+            "description" : "Lists API endpoints",
+            "permission" : "Any"
+        }
+    },
+    "Authentication":
+    {
+        "/api/auth/login/": 
+        {
+            "method" : "GET/POST",
+            "description" : "Login as member/trustee/admin",
+            "permission" : "Viewer (can't be logged in already)"
+        },
+        "/api/auth/logout/": 
+        {
+            "method" : "GET/POST",
+            "description" : "Logout",
+            "permission" : "Member/Trustee/Admin"
+        }
+    },
+    "Users":
+    {
+        "/api/users/":
+        {
+            "method" : "GET",
+            "description" : "Gets data of all users",
+            "permission" : "Any"
+        },
+        "/api/users/new/": 
+        {
+            "method" : "GET/POST",
+            "description" : "Create a new member user only",
+            "permission" : "Any"
+        },
+        "/api/users/admin_new/": 
+        {
+            "method" : "GET/POST",
+            "description" : "Admin view: create any type of user",
+            "permission" : "Admin"
+        },
+        "/api/users/:id/":
+        {
+            "method" : "GET",
+            "description" : "Gets data of a user by id",
+            "permission" : "Any"
+        },
+        "/api/users/:id/edit/":
+        {
+            "method" : "GET/PUT",
+            "description" : "Updates user data by id",
+            "permission" : "Member/Trustee/Admin"
+        },
+        "/api/users/:id/delete/":
+        {
+            "method" : "GET/PUT",
+            "description" : "Deletes user data by id",
+            "permission" : "Member/Trustee/Admin"
+        }
+    }
+}

@@ -1,0 +1,69 @@
+# MySQL database: port 3306
+# Node backend: port 3000
+# React frontend: port 5000
+# Nginx reverse proxy: port 80 -> 5000
+
+services:
+  mysql:
+    image: mysql:latest
+    container_name: mysql_database
+    restart: always
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: five_steps
+      MYSQL_ROOT_PASSWORD: password
+    volumes:
+      - ./database_scripts:/docker-entrypoint-initdb.d
+    networks:
+      - mysql_network
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      timeout: 5s
+      retries: 3
+
+  node_server:
+    build:
+      context: ./node_server
+      dockerfile: ./Dockerfile
+    container_name: node_server
+    restart: always
+    ports:
+      - "3000:3000"
+    networks:
+      - mysql_network
+    environment:
+      - IP=localhost
+      - PORT=3000
+      - FRONTEND_PORT=5000
+      - DB_PORT=3306
+      - JWT_SECRET=5STEPSENCRYPTIONKEY
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+  react_client:
+    build:
+      context: ./react_client
+      dockerfile: ./Dockerfile
+    container_name: react_client
+    restart: always
+    ports:
+      - "5173:5000"
+    networks:
+      - mysql_network
+    environment:
+      - IP=localhost
+      - PORT=5000
+      - BACKEND_PORT=3000
+    volumes:
+      - ./.env:/app/.env
+    depends_on:
+      - node_server
+
+volumes:
+  mysql_data:
+
+networks:
+  mysql_network:
+
