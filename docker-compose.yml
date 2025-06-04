@@ -1,7 +1,7 @@
 # MySQL database: port 3306
 # Node backend: port 3000
-# React frontend: port 5000
-# Nginx reverse proxy: port 80 -> 5000
+# React frontend: port 5173
+# Nginx reverse proxy: port 80
 
 services:
   mysql:

@@ -54,6 +54,12 @@
             "method" : "GET/PUT",
             "description" : "Deletes member data by id",
             "permission" : "Member/Admin"
+        },
+        "/api/members/:id/stats/:date/:prayer":
+        {
+            "method" : "GET",
+            "description" : "Retrieves prayer data for a member by id on a given date for a specific prayer",
+            "permission" : "Member/Admin"
         }
     },
     "Trustees":

@@ -89,8 +89,8 @@ app.get("/", async (req, res) =>
 
 //#region ========== Get data of trustee by ID ==========
 
-// Retrieves data of trustee with 'id'
-app.get("/:id/", async (req, res) =>
+// Retrieves full data of trustee with 'id' (only viewable by that trustee or an admin)
+app.get("/:id/", isLoggedIn, requirePermissions("Trustee", "Admin"), async (req, res) =>
 {	
 	const { id } = req.params;
 
@@ -98,7 +98,7 @@ app.get("/:id/", async (req, res) =>
 	{
 		const [trustees] = await pool.execute
 		(
-			`SELECT Users.ID, FirstName, LastName, DOB, Gender, Email, Trust_ID
+			`SELECT *
 			FROM Users, Trustees 
 			WHERE Trustees.ID = Users.ID AND Users.ID = ?`,
 			[id]

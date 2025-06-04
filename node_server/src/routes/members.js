@@ -91,8 +91,8 @@ app.get("/", async (req, res) =>
 
 //#region ========== Get data of member by ID ==========
 
-// Retrieves data (except contact info) of member with 'id'
-app.get("/:id/", async (req, res) =>
+// Retrieves full data of member with 'id' (only viewable by that member or an admin)
+app.get("/:id/", isLoggedIn, requirePermissions("Member", "Admin"), async (req, res) =>
 {	
 	const { id } = req.params;
 
@@ -100,7 +100,7 @@ app.get("/:id/", async (req, res) =>
 	{
 		const [members] = await pool.execute
 		(
-			`SELECT Users.ID, FirstName, LastName, DOB, Gender, Masjid_ID 
+			`SELECT *
 			FROM Users, Members 
 			WHERE Members.ID = Users.ID AND Users.ID = ?`,
 			[id]
@@ -314,6 +314,71 @@ app.post("/:id/delete/", isLoggedIn, requirePermissions("Member", "Admin"), asyn
         console.error("Error deleting member data: " + error);
         return res.status(500).send("Error deleting member data: " + error);
     }
+});
+
+//#endregion
+
+
+
+//#region ========== Get prayer statistics of member by ID ==========
+
+// Retrieves prayer statistics of member with 'id' at a 'date' for a certain 'prayer' (only viewable by that member or an admin)
+app.get("/:id/stats/:date/:prayer", isLoggedIn, requirePermissions("Member", "Admin"), async (req, res) =>
+{	
+	const { id, date, prayer } = req.params;
+
+	try
+	{
+		const [members] = await pool.execute
+		(
+			`SELECT Statistics_ID 
+			FROM Members 
+			WHERE Members.ID = ?`,
+			[id]
+		);
+
+		if (members.length == 0)
+		{
+			return res.status(404).send("No member exists with id: " + id);
+		}
+
+		const statsID = members[0].Statistics_ID;
+
+		const [dailyStatistics] = await pool.execute
+		(
+			`SELECT ID
+			FROM DailyUserStatistics 
+			WHERE Statistics_ID = ? AND CurrentDate = ?`,
+			[statsID, date]
+		);
+
+		if (dailyStatistics.length == 0)
+		{
+			return res.status(404).send("No daily user statistics for date: " + date);
+		}
+
+		const dailyStatsID = dailyStatistics[0].ID;
+
+		const [prayerStatistics] = await pool.execute
+		(
+			`SELECT Prayer, Attended, Steps
+			FROM PrayerUserStatistics 
+			WHERE Statistics_ID = ? AND Prayer = ?`,
+			[dailyStatsID, prayer]
+		);
+
+		if (prayerStatistics.length == 0)
+		{
+			return res.status(404).send("No prayer user statistics for prayer: " + prayer);
+		}
+	
+		return res.status(200).send(prayerStatistics[0]);
+	}
+	catch (error)
+	{
+		console.error(`Error retrieving prayer statistics of member ${id} at date ${date} for prayer ${prayer}: ` + error);
+		return res.status(500).send(`Error retrieving prayer statistics of member ${id} at date ${date} for prayer ${prayer}: ` + error);
+	}
 });
 
 //#endregion

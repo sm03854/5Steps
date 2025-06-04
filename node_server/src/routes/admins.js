@@ -87,8 +87,8 @@ app.get("/", async (req, res) =>
 
 //#region ========== Get data of admin by ID ==========
 
-// Retrieves data of admin with 'id'
-app.get("/:id/", async (req, res) =>
+// Retrieves full data of admin with 'id' (only viewable by admins)
+app.get("/:id/", isLoggedIn, requirePermissions("Admin"), async (req, res) =>
 {	
 	const { id } = req.params;
 
@@ -96,7 +96,7 @@ app.get("/:id/", async (req, res) =>
 	{
 		const [admins] = await pool.execute
 		(
-			`SELECT Users.ID, FirstName, LastName, DOB, Gender, Email
+			`SELECT *
 			FROM Users, Admins 
 			WHERE Admins.ID = Users.ID AND Users.ID = ?`,
 			[id]
