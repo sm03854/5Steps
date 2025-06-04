@@ -23,43 +23,103 @@
             "permission" : "Member/Trustee/Admin"
         }
     },
-    "Users":
+    "Members":
     {
-        "/api/users/":
+        "/api/members/":
         {
             "method" : "GET",
-            "description" : "Gets data of all users",
+            "description" : "Gets data of all members",
             "permission" : "Any"
         },
-        "/api/users/new/": 
+        "/api/members/new/": 
         {
             "method" : "GET/POST",
-            "description" : "Create a new member user only",
+            "description" : "Create a new member",
             "permission" : "Any"
         },
-        "/api/users/admin_new/": 
+        "/api/members/:id/":
+        {
+            "method" : "GET",
+            "description" : "Gets data of a member by id",
+            "permission" : "Any"
+        },
+        "/api/members/:id/edit/":
+        {
+            "method" : "GET/PUT",
+            "description" : "Updates member data by id",
+            "permission" : "Member/Admin"
+        },
+        "/api/members/:id/delete/":
+        {
+            "method" : "GET/PUT",
+            "description" : "Deletes member data by id",
+            "permission" : "Member/Admin"
+        }
+    },
+    "Trustees":
+    {
+        "/api/trustees/":
+        {
+            "method" : "GET",
+            "description" : "Gets data of all trustees",
+            "permission" : "Any"
+        },
+        "/api/trustees/new/": 
         {
             "method" : "GET/POST",
-            "description" : "Admin view: create any type of user",
+            "description" : "Create a new trustee",
             "permission" : "Admin"
         },
-        "/api/users/:id/":
+        "/api/trustees/:id/":
         {
             "method" : "GET",
-            "description" : "Gets data of a user by id",
+            "description" : "Gets data of a trustee by id",
             "permission" : "Any"
         },
-        "/api/users/:id/edit/":
+        "/api/trustees/:id/edit/":
         {
             "method" : "GET/PUT",
-            "description" : "Updates user data by id",
-            "permission" : "Member/Trustee/Admin"
+            "description" : "Updates trustee data by id",
+            "permission" : "Trustee/Admin"
         },
-        "/api/users/:id/delete/":
+        "/api/trustees/:id/delete/":
         {
             "method" : "GET/PUT",
-            "description" : "Deletes user data by id",
-            "permission" : "Member/Trustee/Admin"
+            "description" : "Deletes trustee data by id",
+            "permission" : "Trustee/Admin"
+        }
+    },
+    "Admins":
+    {
+        "/api/admins/":
+        {
+            "method" : "GET",
+            "description" : "Gets data of all admins",
+            "permission" : "Any"
+        },
+        "/api/admins/new/": 
+        {
+            "method" : "GET/POST",
+            "description" : "Create a new admin",
+            "permission" : "Admin"
+        },
+        "/api/admins/:id/":
+        {
+            "method" : "GET",
+            "description" : "Gets data of an admin by id",
+            "permission" : "Any"
+        },
+        "/api/admins/:id/edit/":
+        {
+            "method" : "GET/PUT",
+            "description" : "Updates admin data by id",
+            "permission" : "Admin"
+        },
+        "/api/admins/:id/delete/":
+        {
+            "method" : "GET/PUT",
+            "description" : "Deletes admin data by id",
+            "permission" : "Admin"
         }
     }
 }

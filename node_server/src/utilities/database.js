@@ -28,4 +28,39 @@ const pool = mysql.createPool
 
 
 
+/**
+ * Executes multiple SQL queries (defined in 'callback') in a transaction.
+ * If there are any errors in the transaction, it will be 'rolled back',
+ * meaning none of the SQL queries save to the database, else, it will
+ * be commited.
+ * Prevents errors with INSERT queries where half of the queries insert
+ * data but the other half causes an error, leading to half-half data in
+ * the database.
+ * @param {*} callback SQL queries to execute
+ * @returns 
+ */
+export async function executeTransaction(callback)
+{
+    const conn = await pool.getConnection();
+
+    try 
+    {
+        await conn.beginTransaction();
+        const result = await callback(conn);
+        await conn.commit();
+        return result;
+    } 
+    catch (e) 
+    {
+        await conn.rollback();
+        throw e;
+    } 
+    finally 
+    {
+        conn.release();
+    }
+}
+
+
+
 export { pool };

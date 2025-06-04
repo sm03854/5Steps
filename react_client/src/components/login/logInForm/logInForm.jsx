@@ -3,10 +3,9 @@ import {Link} from 'react-router-dom'
 import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
 import LogInImage from '../../../assets/logInImage.png'
-import Navbar from '../../navbars/homeBar/navbar.jsx'
+import Navbar from '../../navbar/navbar.jsx'
 import { useState } from "react";
 import { useNavigate } from 'react-router-dom';
-import { useNotification } from "../../notifications/notificationContext.jsx";
 
 const LoginForm = () => 
 {
