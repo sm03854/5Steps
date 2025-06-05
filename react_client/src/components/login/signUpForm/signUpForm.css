@@ -33,7 +33,6 @@
     align-items: center;
     /* background-color: #F6F6F6; */
     padding-top: 100px;
-    padding-right: 40px; /* Added padding-right to move the sign up box to the left */
     box-sizing: border-box;
     overflow: hidden;
 }

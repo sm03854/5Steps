@@ -2,21 +2,22 @@ import './signUpForm.css'
 import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
 import {Link} from 'react-router-dom'
-import SignUpImage from '../../../assets/signUpImage.png'
 import Navbar from '../../navbar/navbar.jsx'
 import { useNavigate } from 'react-router-dom';
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import MasjidSearch from "./masjidSearch.jsx";
+
 
 
 const signUpForm = () => 
 {
-    const [name, setName] = useState('');
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
     const [DOB, setDOB] = useState('');
     const [gender, setGender] = useState('Male');
-    const [username, setUsername] = useState('');
+    const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [type, setType] = useState('Student');
-    const [class_id, setClassID] = useState(0);
+    const [masjidID, setMasjidID] = useState(0);
 
     const [error, setError] = useState('');
 
@@ -26,14 +27,14 @@ const signUpForm = () =>
     {
         try 
         {
-            const response = await fetch(`/api/users/new/`, 
+            const response = await fetch(`/api/members/new/`, 
             {
                 method: 'POST',
                 headers: 
                 {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ name, DOB, gender, username, password, type, class_id }),
+                body: JSON.stringify({ firstName, lastName, DOB, gender, email, password, masjidID }),
                 credentials: 'include'
             });
       
@@ -53,20 +54,22 @@ const signUpForm = () =>
     return (
         <div className="sign-up-wrapper">
             <Navbar />
-            <div className="sign-up-image-container">
-                <img src={SignUpImage} alt="hands waving hello" className="sign-up-image" />
-            </div>
             <div className="sign-up-card">
                 <h1 className="text-center log-in-title">Welcome, Sign Up Here!</h1>
                 <Form>
-                    <Form.Group className="mb-4" controlId="formFullName">
-                        <Form.Label className="fs-5">Full Name</Form.Label>
-                        <Form.Control type="text" placeholder="Enter Full Name" onChange={(e) => setName(e.target.value)}/>
+                    <Form.Group className="mb-4" controlId="formFirstName">
+                        <Form.Label className="fs-5">First Name</Form.Label>
+                        <Form.Control type="text" placeholder="Enter your first name" onChange={(e) => setFirstName(e.target.value)}/>
+                    </Form.Group>
+
+                    <Form.Group className="mb-4" controlId="formLastName">
+                        <Form.Label className="fs-5">Last Name</Form.Label>
+                        <Form.Control type="text" placeholder="Enter your last name" onChange={(e) => setLastName(e.target.value)}/>
                     </Form.Group>
 
                     <Form.Group className="mb-4" controlId="formDateOfBirth">
                         <Form.Label className="fs-5">Date of Birth</Form.Label>
-                        <Form.Control type="date" placeholder="Date of Birth" onChange={(e) => setDOB(e.target.value)}/>
+                        <Form.Control type="date" placeholder="Select your date of birth" onChange={(e) => setDOB(e.target.value)}/>
                     </Form.Group>
 
                     <Form.Group className="mb-4" controlId="formGender">
@@ -77,31 +80,20 @@ const signUpForm = () =>
                         </Form.Select>
                     </Form.Group>
 
-                    <Form.Group className="mb-4" controlId="formUsername">
-                        <Form.Label className="fs-5">Username</Form.Label>
-                        <Form.Control type="text" placeholder="Enter Username" onChange={(e) => setUsername(e.target.value)}/>
+                    <Form.Group className="mb-4" controlId="formEmail">
+                        <Form.Label className="fs-5">Email</Form.Label>
+                        <Form.Control type="text" placeholder="Enter your email address" onChange={(e) => setEmail(e.target.value)}/>
                     </Form.Group>
                     
                     <Form.Group className="mb-4" controlId="formPassword">
                         <Form.Label className="fs-5">Password</Form.Label>
-                        <Form.Control type="password" placeholder="Password" onChange={(e) => setPassword(e.target.value)}/>
+                        <Form.Control type="password" placeholder="Enter your password" onChange={(e) => setPassword(e.target.value)}/>
                     </Form.Group>
 
-                    <Form.Group className="mb-4" controlId="formType">
-                        <Form.Label className="fs-5">I am a:</Form.Label>
-                        <Form.Select name="Type" aria-label="Default select example" onChange={(e) => setType(e.target.value)}>
-                            <option value="Student">Student</option>
-                            <option value="Teacher">Teacher</option>
-                        </Form.Select>
-                    </Form.Group>
-
-                    <Form.Group className="mb-4" controlId="formClassId">
-                        <Form.Label className="fs-5">Class ID</Form.Label>
-                        <Form.Control type="number" placeholder="Enter Class ID" onChange={(e) => setClassID(e.target.value)}/>
-                    </Form.Group>
+                    <MasjidSearch onMasjidSelect={(id) => setMasjidID(id)} />
 
                     <Button onClick={signup} className="w-100">
-                        Sign Up
+                        Sign Up (will redirect you to login)
                     </Button>
 
                     <p className="text-center mt-3">
@@ -114,5 +106,7 @@ const signUpForm = () =>
         </div>
     )
 }
+
+
 
 export default signUpForm

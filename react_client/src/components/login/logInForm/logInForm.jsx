@@ -2,20 +2,20 @@ import './logInForm.css'
 import {Link} from 'react-router-dom'
 import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
-import LogInImage from '../../../assets/logInImage.png'
 import Navbar from '../../navbar/navbar.jsx'
 import { useState } from "react";
 import { useNavigate } from 'react-router-dom';
 
+
+
 const LoginForm = () => 
 {
-    const [username, setUsername] = useState('');
+    const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+
     const [error, setError] = useState('');
 
     const navigate = useNavigate();
-
-    const { enableNotification } = useNotification();
 
     const login = async () => 
     {
@@ -28,7 +28,7 @@ const LoginForm = () =>
                 {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ username, password }),
+                body: JSON.stringify({ email, password }),
                 credentials: 'include'
             });
       
@@ -37,10 +37,9 @@ const LoginForm = () =>
                 throw new Error('Login failed');
             }
 
-            enableNotification("Login successful", `Welcome back ${username}!`);
             navigate('/');
         }
-        catch (err) 
+        catch (err)
         {
             setError("Invalid username or password. Please try again.");
         }
@@ -49,19 +48,16 @@ const LoginForm = () =>
     return (
         <div className="log-in-wrapper">
             <Navbar />
-            <div className="log-in-image-container">
-                <img src={LogInImage} alt="two high fives" className="log-in-image" />
-            </div>
             <div className="log-in-card">
                 <Form>
-                    <Form.Group className="mb-4" controlId="formUsername">
-                        <Form.Label className="fs-5">Username</Form.Label>
-                        <Form.Control type="text" placeholder="Enter Username" onChange={(e) => setUsername(e.target.value)}/>
+                    <Form.Group className="mb-4" controlId="formEmail">
+                        <Form.Label className="fs-5">Email</Form.Label>
+                        <Form.Control type="email" placeholder="Enter your email address" onChange={(e) => setEmail(e.target.value)}/>
                     </Form.Group>
                     
                     <Form.Group className="mb-4" controlId="formPassword">
                         <Form.Label className="fs-5">Password</Form.Label>
-                        <Form.Control type="password" placeholder="Password" onChange={(e) => setPassword(e.target.value)}/>
+                        <Form.Control type="password" placeholder="Enter your password" onChange={(e) => setPassword(e.target.value)}/>
                     </Form.Group>
 
                     <Button onClick={login} className="w-100">
@@ -78,5 +74,7 @@ const LoginForm = () =>
         </div>
     )
 }
+
+
 
 export default LoginForm;
