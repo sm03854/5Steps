@@ -16,14 +16,14 @@ app.get("/new", isLoggedIn, requirePermissions("Admin"), (req, res) =>
 });
 
 // Register a new trustee into the database
-app.post("/new", requirePermissions("Admin"), async (req, res) =>
+app.post("/new", isLoggedIn, requirePermissions("Admin"), async (req, res) =>
 {	
     const { firstName, lastName, DOB, gender, email, password, trustID } = req.body;
     const passwordHash = await hashPassword(password);
     
     try 
     {
-		executeTransaction(async () => 
+		await executeTransaction(async () => 
 		{
 			// Insert new user into Users table
 			const [userResult] = await pool.execute
@@ -180,7 +180,7 @@ app.post("/:id/edit/", isLoggedIn, requirePermissions("Trustee", "Admin"), async
 
 	try
 	{
-		executeTransaction(async () =>
+		await executeTransaction(async () =>
 		{
 			await pool.execute
 			(
@@ -252,7 +252,7 @@ app.post("/:id/delete/", isLoggedIn, requirePermissions("Trustee", "Admin"), asy
 
     try
     {
-		executeTransaction(async () =>
+		await executeTransaction(async () =>
 		{
 			const [users] = await pool.execute
 			(

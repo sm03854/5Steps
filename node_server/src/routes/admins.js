@@ -16,14 +16,14 @@ app.get("/new/", isLoggedIn, requirePermissions("Admin"), (req, res) =>
 });
 
 // Register a new admin into the database
-app.post("/new/", requirePermissions("Admin"), async (req, res) =>
+app.post("/new/", isLoggedIn, requirePermissions("Admin"), async (req, res) =>
 {	
     const { firstName, lastName, DOB, gender, email, password } = req.body;
     const passwordHash = await hashPassword(password);
     
     try 
     {
-		executeTransaction(async () => 
+		await executeTransaction(async () => 
 		{
 			// Insert new user into Users table
 			const [userResult] = await pool.execute
@@ -168,7 +168,7 @@ app.post("/:id/edit/", isLoggedIn, requirePermissions("Admin"), async (req, res)
 
 	try
 	{
-		executeTransaction(async () => 
+		await executeTransaction(async () => 
 		{
 			await pool.execute
 			(
@@ -232,7 +232,7 @@ app.post("/:id/delete/", isLoggedIn, requirePermissions("Admin"), async (req, re
 
     try
     {
-		executeTransaction(async () =>
+		await executeTransaction(async () =>
 		{
 			const [users] = await pool.execute
 			(

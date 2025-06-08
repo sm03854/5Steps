@@ -23,7 +23,7 @@ app.post("/new/", async (req, res) =>
     
     try 
     {
-		executeTransaction(async () =>
+		await executeTransaction(async () =>
 		{
 			// Insert new user into Users table
 			const [userResult] = await pool.execute
@@ -182,7 +182,7 @@ app.post("/:id/edit/", isLoggedIn, requirePermissions("Member", "Admin"), async 
 
 	try
 	{
-		executeTransaction(async () =>
+		await executeTransaction(async () =>
 		{
 			await pool.execute
 			(
@@ -254,7 +254,7 @@ app.post("/:id/delete/", isLoggedIn, requirePermissions("Member", "Admin"), asyn
 
     try
     {
-		executeTransaction(async () =>
+		await executeTransaction(async () =>
 		{
 			const [users] = await pool.execute
 			(

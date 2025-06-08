@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Edit Masjid</title>
+ </head>
+  <body>
+    <h1>Edit details for your Masjid:</h1>
+    <form action="/api/masjids/<%= id %>/edit/" method="POST">
+      <label for="name">Full Name: </label>
+      <input type='text' id='name' name="name" value="<%= name %>" placeholder="Enter your masjid name..">
+      <br><br>
+
+      <label for="name">Postcode: </label>
+      <input type='text' id='postcode' name="postcode" value="<%= postcode %>" placeholder="Enter your masjid postcode..">
+      <br><br>
+
+      <label for="name">Address: </label>
+      <input type='text' id='address' name="address" value="<%= address %>" placeholder="Enter your masjid address..">
+      <br><br>
+
+      <label for="email">Email: </label>
+      <input type='email' id='email' name="email" value="<%= email %>" placeholder="Enter your masjid email..">
+      <br><br>
+
+      <button type="submit">Update Masjid details</button>
+    </form>
+  </body>
+</html>

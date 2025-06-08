@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Delete masjid</title>
+ </head>
+  <body>
+    <h1>Delete your masjid:</h1>
+    <h4>Are you sure you want to delete your masjid? All data and trustee accounts will be lost permanently.</h4>
+    <form action="/api/masjids/<%= id %>/delete" method="POST">
+      <button type="submit">Delete masjid</button>
+    </form>
+  </body>
+</html>
