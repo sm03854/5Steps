@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Log prayer statistics</title>
+ </head>
+  <body>
+    <h1>Enter details for your prayer:</h1>
+    <form action="/api/members/<%= id %>/<%= date %>/<%= prayer %>/log" method="POST">
+      <label for="attended">Attended: </label>
+      <input type='checkbox' id='attended' name="attended" value="true" placeholder="Did you attend the prayer?">
+      <br><br>
+
+      <label for="steps">Steps: </label>
+      <input type='number' id='steps' name="steps" placeholder="Enter no. of steps you took to the masjid..">
+      <br><br>
+
+      <button type="submit">Log prayer</button>
+    </form>
+  </body>
+</html>

@@ -66,7 +66,8 @@ CREATE TABLE PrayerUserStatistics
 	Steps				INT UNSIGNED NOT NULL DEFAULT 0,
 
 	PRIMARY KEY (ID),
-	FOREIGN KEY (Statistics_ID) REFERENCES DailyUserStatistics(ID) ON DELETE CASCADE
+	FOREIGN KEY (Statistics_ID) REFERENCES DailyUserStatistics(ID) ON DELETE CASCADE,
+	UNIQUE (Statistics_ID, Prayer)
 );
 
 
@@ -208,7 +209,6 @@ INSERT INTO DailyUserStatistics VALUES
 (1000001, "2025-06-01", 1001);
 
 INSERT INTO PrayerUserStatistics VALUES
-(1000001, 1000001, "Fajr", FALSE, 0),
 (1000002, 1000001, "Zuhr", TRUE, 1000),
 (1000003, 1000001, "Asr", TRUE, 1100),
 (1000004, 1000001, "Maghrib", TRUE, 800),

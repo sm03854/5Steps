@@ -323,7 +323,7 @@ app.post("/:id/delete/", isLoggedIn, requirePermissions((req) => req.user.id == 
 //#region ========== Get prayer statistics of member by ID ==========
 
 // Retrieves prayer statistics of member with 'id' at a 'date' for a certain 'prayer' (only viewable by that member or an admin)
-app.get("/:id/stats/:date/:prayer", isLoggedIn, requirePermissions((req) => req.user.id == req.params.id, "Member"), async (req, res) =>
+app.get("/:id/:date/:prayer/stats", isLoggedIn, requirePermissions((req) => req.user.id == req.params.id, "Member"), async (req, res) =>
 {	
 	const { id, date, prayer } = req.params;
 
@@ -378,6 +378,93 @@ app.get("/:id/stats/:date/:prayer", isLoggedIn, requirePermissions((req) => req.
 	{
 		console.error(`Error retrieving prayer statistics of member ${id} at date ${date} for prayer ${prayer}: ` + error);
 		return res.status(500).send(`Error retrieving prayer statistics of member ${id} at date ${date} for prayer ${prayer}: ` + error);
+	}
+});
+
+//#endregion
+
+
+
+//#region ========== Log prayer statistics of member by ID ==========
+
+// Displays HTML form to update member user data (front-facing-api-route)
+app.get("/:id/:date/:prayer/log", isLoggedIn, requirePermissions((req) => req.user.id == req.params.id, "Member"), async (req, res) =>
+{	
+	const { id, date, prayer } = req.params;
+
+	try
+	{
+		return res.render("user/member/log_prayers",
+		{
+			id: id,
+			date: date,
+			prayer: prayer
+		});
+	}
+	catch (error)
+	{
+		console.error("Error retrieving prayer statistics data of currently logged-in member user: " + error);
+		return res.status(500).send("Error retrieving prayer statistics data of currently logged-in member user: " + error);
+	}
+});
+
+// Logs prayer statistics (steps) of member with 'id' at a 'date' for a certain 'prayer' (only viewable by that member or an admin)
+app.post("/:id/:date/:prayer/log", isLoggedIn, requirePermissions((req) => req.user.id == req.params.id, "Member"), async (req, res) =>
+{	
+	const { id, date, prayer } = req.params;
+	const { attended, steps } = req.body;
+
+	try
+	{
+		const [members] = await pool.execute
+		(
+			`SELECT Statistics_ID 
+			FROM Members 
+			WHERE Members.ID = ?`,
+			[id]
+		);
+
+		if (members.length == 0)
+		{
+			return res.status(404).send("No member exists with id: " + id);
+		}
+
+		const statsID = members[0].Statistics_ID;
+
+		const [dailyStatistics] = await pool.execute
+		(
+			`SELECT ID
+			FROM DailyUserStatistics 
+			WHERE Statistics_ID = ? AND CurrentDate = ?`,
+			[statsID, date]
+		);
+
+		if (dailyStatistics.length == 0)
+		{
+			return res.status(404).send("No daily user statistics for date: " + date);
+		}
+
+		const dailyStatsID = dailyStatistics[0].ID;
+		
+		const didAttend = attended === "true";
+
+		await pool.execute
+		(
+			`INSERT INTO PrayerUserStatistics
+			(Statistics_ID, Prayer, Attended, Steps)
+			VALUES (?, ?, ?, ?)
+			ON DUPLICATE KEY UPDATE
+    		Attended = VALUES(Attended),
+    		Steps = VALUES(Steps)`,
+			[dailyStatsID, prayer, didAttend, steps]
+		);
+	
+		return res.status(201).send("Logged prayer statistics successfully.");
+	}
+	catch (error)
+	{
+		console.error(`Error logging prayer statistics of member ${id} at date ${date} for prayer ${prayer}: ` + error);
+		return res.status(500).send(`Error logging prayer statistics of member ${id} at date ${date} for prayer ${prayer}: ` + error);
 	}
 });
 

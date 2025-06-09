@@ -168,6 +168,45 @@ app.get("/:id/", async (req, res) =>
 
 
 
+//#region ========== Get data of all members in masjid by ID ==========
+
+// Retrieves data of all members of a masjid by ID in the database
+app.get("/:id/members", async (req, res) =>
+{	
+	const { id } = req.params;
+
+	try
+	{
+		const [masjids] = await pool.execute(`SELECT ID FROM Masjids WHERE ID = ?`, [id]);
+
+		if (masjids.length == 0)
+		{
+			return res.status(404).send("No masjid exists with id: " + id);
+		}
+
+		const masjid = masjids[0];
+
+		const [members] = await pool.execute
+		(
+			`SELECT Users.ID, FirstName, LastName, DOB, Gender
+			FROM Users, Members
+			WHERE Members.ID = Users.ID AND Masjid_ID = ?`,
+			[masjid.ID]
+		);
+	
+		return res.status(200).send(members);
+	}
+	catch (error)
+	{
+		console.error(`Error retrieving data of masjid members ${id}: ` + error);
+		return res.status(500).send(`Error retrieving data of masjid members ${id}: ` + error);
+	}
+});
+
+//#endregion
+
+
+
 //#region ========== Get data of all trustees in masjid by ID ==========
 
 // Retrieves data of all trustees in the trust of a masjid by ID in the database
@@ -285,7 +324,7 @@ app.post("/:id/edit/", isLoggedIn, requirePermissions("Admin"), async (req, res)
 //#region ========== Get prayer statistics of masjid by ID ==========
 
 // Retrieves prayer statistics of masjid with 'id' at a 'date' for a certain 'prayer' (only viewable by a trustee of that masjid or an admin)
-app.get("/:id/stats/:date/:prayer", isLoggedIn, requirePermissions((req) => req.user.masjid_id == req.params.id, "Trustee"), async (req, res) =>
+app.get("/:id/:date/:prayer/stats", isLoggedIn, requirePermissions((req) => req.user.masjid_id == req.params.id, "Trustee"), async (req, res) =>
 {	
 	const { id, date, prayer } = req.params;
 
