@@ -90,7 +90,7 @@ app.get("/", async (req, res) =>
 //#region ========== Get data of trustee by ID ==========
 
 // Retrieves full data of trustee with 'id' (only viewable by that trustee or an admin)
-app.get("/:id/", isLoggedIn, requirePermissions("Trustee", "Admin"), async (req, res) =>
+app.get("/:id/", isLoggedIn, requirePermissions((req) => req.user.id == req.params.id, "Trustee"), async (req, res) =>
 {	
 	const { id } = req.params;
 
@@ -125,7 +125,7 @@ app.get("/:id/", isLoggedIn, requirePermissions("Trustee", "Admin"), async (req,
 //#region ========== Edit trustee by ID ==========
 
 // Displays HTML form to update trustee user data (front-facing-api-route)
-app.get("/:id/edit/", isLoggedIn, requirePermissions("Trustee", "Admin"), async (req, res) =>
+app.get("/:id/edit/", isLoggedIn, requirePermissions((req) => req.user.id == req.params.id, "Trustee"), async (req, res) =>
 {	
 	const { id } = req.params;
 
@@ -172,7 +172,7 @@ app.get("/:id/edit/", isLoggedIn, requirePermissions("Trustee", "Admin"), async 
 });
 
 // Updates user data
-app.post("/:id/edit/", isLoggedIn, requirePermissions("Trustee", "Admin"), async (req, res) =>
+app.post("/:id/edit/", isLoggedIn, requirePermissions((req) => req.user.id == req.params.id, "Trustee"), async (req, res) =>
 {	
 	const { id } = req.params;
 	const { firstName, lastName, DOB, gender, email, password, trustID } = req.body;
@@ -220,7 +220,7 @@ app.post("/:id/edit/", isLoggedIn, requirePermissions("Trustee", "Admin"), async
 //#region ========== Delete trustee by ID ==========
 
 // Displays HTML form to delete trustee data (front-facing-api-route)
-app.get("/:id/delete/", isLoggedIn, requirePermissions("Trustee", "Admin"), async (req, res) =>
+app.get("/:id/delete/", isLoggedIn, requirePermissions((req) => req.user.id == req.params.id, "Trustee"), async (req, res) =>
 {	
     const { id } = req.params;
 
@@ -246,7 +246,7 @@ app.get("/:id/delete/", isLoggedIn, requirePermissions("Trustee", "Admin"), asyn
 });
 
 // Delete user data
-app.post("/:id/delete/", isLoggedIn, requirePermissions("Trustee", "Admin"), async (req, res) =>
+app.post("/:id/delete/", isLoggedIn, requirePermissions((req) => req.user.id == req.params.id, "Trustee"), async (req, res) =>
 {	
     const { id } = req.params;
 

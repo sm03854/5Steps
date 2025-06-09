@@ -9,6 +9,53 @@ const app = express.Router();
 
 
 
+//#region ========== Search masjids by name ==========
+
+// Retrieves all masjids with similar names to 'name' parameter
+app.get("/search", async (req, res) =>
+{	
+    const { name } = req.query;
+
+    if (!name || name.length < 1) 
+    {
+        return res.status(400).json({ error: 'Missing or invalid query parameter: name' });
+    }
+
+    try 
+    {
+        const [rows] = await pool.execute
+        (
+            `SELECT ID, FullName, AddressLine
+            FROM Masjids
+            WHERE FullName LIKE ?
+            ORDER BY
+                CASE
+                WHEN FullName LIKE ? THEN 1
+                WHEN FullName LIKE ? THEN 2
+                ELSE 3
+                END
+            LIMIT 10
+            `,
+            [
+                `%${name}%`,
+                `${name}%`,     // Starts with input
+                `%${name}`      // Ends with input
+            ]
+        );
+
+        return res.status(200).send(rows);
+    } 
+    catch (err) 
+    {
+        console.error(`Error searching for masjid with name ${name}:`, err);
+        res.status(500).send(`Error searching for masjid with name ${name}:`, err);
+    }
+});
+
+//#endregion
+
+
+
 //#region ========== Create new masjid ==========
 
 // Displays HTML form to enter masjid data (front-facing-api-route)
@@ -121,6 +168,46 @@ app.get("/:id/", async (req, res) =>
 
 
 
+//#region ========== Get data of all trustees in masjid by ID ==========
+
+// Retrieves data of all trustees in the trust of a masjid by ID in the database
+app.get("/:id/trustees", async (req, res) =>
+{	
+	const { id } = req.params;
+
+	try
+	{
+		const [masjids] = await pool.execute(`SELECT Trust_ID FROM Masjids WHERE ID = ?`, [id]);
+
+		if (masjids.length == 0)
+		{
+			return res.status(404).send("No masjid exists with id: " + id);
+		}
+
+		const masjid = masjids[0];
+		const trustID = masjid.Trust_ID;
+
+		const [trustees] = await pool.execute
+		(
+			`SELECT Users.ID, FirstName, LastName, DOB, Gender, Email
+			FROM Users, Trustees
+			WHERE Trustees.ID = Users.ID AND Trust_ID = ?`,
+			[trustID]
+		);
+	
+		return res.status(200).send(trustees);
+	}
+	catch (error)
+	{
+		console.error(`Error retrieving data of masjid trustees ${id}: ` + error);
+		return res.status(500).send(`Error retrieving data of masjid trustees ${id}: ` + error);
+	}
+});
+
+//#endregion
+
+
+
 //#region ========== Edit masjid ==========
 
 // Displays HTML form to update trustee user data (front-facing-api-route)
@@ -195,47 +282,65 @@ app.post("/:id/edit/", isLoggedIn, requirePermissions("Admin"), async (req, res)
 
 
 
-//#region ========== Search masjids by name ==========
+//#region ========== Get prayer statistics of masjid by ID ==========
 
-// Retrieves all masjids with similar names to 'name' parameter
-app.get("/search", async (req, res) =>
+// Retrieves prayer statistics of masjid with 'id' at a 'date' for a certain 'prayer' (only viewable by a trustee of that masjid or an admin)
+app.get("/:id/stats/:date/:prayer", isLoggedIn, requirePermissions((req) => req.user.masjid_id == req.params.id, "Trustee"), async (req, res) =>
 {	
-    const { name } = req.query;
+	const { id, date, prayer } = req.params;
 
-    if (!name || name.length < 1) 
-    {
-        return res.status(400).json({ error: 'Missing or invalid query parameter: name' });
-    }
+	try
+	{
+		const [masjids] = await pool.execute
+		(
+			`SELECT Statistics_ID 
+			FROM Masjids
+			WHERE ID = ?`,
+			[id]
+		);
 
-    try 
-    {
-        const [rows] = await pool.execute
-        (
-            `SELECT ID, FullName
-            FROM Masjids
-            WHERE FullName LIKE ?
-            ORDER BY
-                CASE
-                WHEN FullName LIKE ? THEN 1
-                WHEN FullName LIKE ? THEN 2
-                ELSE 3
-                END
-            LIMIT 10
-            `,
-            [
-                `%${name}%`,
-                `${name}%`,     // Starts with input
-                `%${name}`      // Ends with input
-            ]
-        );
+		if (masjids.length == 0)
+		{
+			return res.status(404).send("No masjid exists with id: " + id);
+		}
 
-        return res.status(200).send(rows);
-    } 
-    catch (err) 
-    {
-        console.error(`Error searching for masjid with name ${name}:`, err);
-        res.status(500).send(`Error searching for masjid with name ${name}:`, err);
-    }
+		const statsID = masjids[0].Statistics_ID;
+
+		const [dailyStatistics] = await pool.execute
+		(
+			`SELECT ID
+			FROM DailyMasjidStatistics 
+			WHERE Statistics_ID = ? AND CurrentDate = ?`,
+			[statsID, date]
+		);
+
+		if (dailyStatistics.length == 0)
+		{
+			return res.status(404).send("No daily masjid statistics for date: " + date);
+		}
+
+		const dailyStatsID = dailyStatistics[0].ID;
+
+		const [prayerStatistics] = await pool.execute
+		(
+			`SELECT Prayer, Attendees
+			FROM PrayerMasjidStatistics 
+			WHERE Statistics_ID = ? AND Prayer = ?`,
+			[dailyStatsID, prayer]
+		);
+
+		if (prayerStatistics.length == 0)
+		{
+			return res.status(404).send("No prayer masjid statistics for prayer: " + prayer);
+		}
+	
+		return res.status(200).send(prayerStatistics[0]);
+	}
+	catch (error)
+	{
+		console.error(`Error retrieving prayer statistics of masjid ${id} at date ${date} for prayer ${prayer}: ` + error);
+		return res.status(500).send(`Error retrieving prayer statistics of masjid ${id} at date ${date} for prayer ${prayer}: ` + error);
+	}
 });
 
 //#endregion

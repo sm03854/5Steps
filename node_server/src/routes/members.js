@@ -92,7 +92,7 @@ app.get("/", async (req, res) =>
 //#region ========== Get data of member by ID ==========
 
 // Retrieves full data of member with 'id' (only viewable by that member or an admin)
-app.get("/:id/", isLoggedIn, requirePermissions("Member", "Admin"), async (req, res) =>
+app.get("/:id/", isLoggedIn, requirePermissions((req) => req.user.id == req.params.id, "Member"), async (req, res) =>
 {	
 	const { id } = req.params;
 
@@ -127,7 +127,7 @@ app.get("/:id/", isLoggedIn, requirePermissions("Member", "Admin"), async (req, 
 //#region ========== Edit member by ID ==========
 
 // Displays HTML form to update member user data (front-facing-api-route)
-app.get("/:id/edit/", isLoggedIn, requirePermissions("Member", "Admin"), async (req, res) =>
+app.get("/:id/edit/", isLoggedIn, requirePermissions((req) => req.user.id == req.params.id, "Member"), async (req, res) =>
 {	
 	const { id } = req.params;
 
@@ -174,7 +174,7 @@ app.get("/:id/edit/", isLoggedIn, requirePermissions("Member", "Admin"), async (
 });
 
 // Updates member data
-app.post("/:id/edit/", isLoggedIn, requirePermissions("Member", "Admin"), async (req, res) =>
+app.post("/:id/edit/", isLoggedIn, requirePermissions((req) => req.user.id == req.params.id, "Member"), async (req, res) =>
 {	
 	const { id } = req.params;
 	const { firstName, lastName, DOB, gender, email, password, masjidID } = req.body;
@@ -222,7 +222,7 @@ app.post("/:id/edit/", isLoggedIn, requirePermissions("Member", "Admin"), async 
 //#region ========== Delete member by ID ==========
 
 // Displays HTML form to delete member data (front-facing-api-route)
-app.get("/:id/delete/", isLoggedIn, requirePermissions("Member", "Admin"), async (req, res) =>
+app.get("/:id/delete/", isLoggedIn, requirePermissions((req) => req.user.id == req.params.id, "Member"), async (req, res) =>
 {	
     const { id } = req.params;
 
@@ -248,7 +248,7 @@ app.get("/:id/delete/", isLoggedIn, requirePermissions("Member", "Admin"), async
 });
 
 // Delete member data
-app.post("/:id/delete/", isLoggedIn, requirePermissions("Member", "Admin"), async (req, res) =>
+app.post("/:id/delete/", isLoggedIn, requirePermissions((req) => req.user.id == req.params.id, "Member"), async (req, res) =>
 {	
     const { id } = req.params;
 
@@ -323,7 +323,7 @@ app.post("/:id/delete/", isLoggedIn, requirePermissions("Member", "Admin"), asyn
 //#region ========== Get prayer statistics of member by ID ==========
 
 // Retrieves prayer statistics of member with 'id' at a 'date' for a certain 'prayer' (only viewable by that member or an admin)
-app.get("/:id/stats/:date/:prayer", isLoggedIn, requirePermissions("Member", "Admin"), async (req, res) =>
+app.get("/:id/stats/:date/:prayer", isLoggedIn, requirePermissions((req) => req.user.id == req.params.id, "Member"), async (req, res) =>
 {	
 	const { id, date, prayer } = req.params;
 

@@ -55,9 +55,13 @@ export function isLoggedOut(req, res, next)
 //#region User Permissions
 
 /**
- * Checks whether the user has the correct permissions to access a route
+ * Checks whether the user has the correct permissions to access a route.
+ * Example usage:
+ * requirePermissions((req) => req.user.id == req.params.id, "Member")
+ * - Checks whether user's id matches id given in route
+ * - Checks whether the user has 'Member' access
  */
-export function requirePermissions(...allowedRoles)
+export function requirePermissions(idMatches = (req) => true, ...permissions)
 {
     return (req, res, next) => 
     {
@@ -67,17 +71,17 @@ export function requirePermissions(...allowedRoles)
             return res.status(401).send("Not logged in.");
         }
 
-        if (req.user.permission != "Admin")
-        {
-            // ID of user must match ID of request (if user is a member or trustee)       
-            if (req.user.id != req.params.id)
-            {
-                // Status code 403: Forbidden
-                return res.status(403).send("Access denied.");
-            }
-        }
+        const isAdmin = req.user.permission === "Admin";
 
-        if (!allowedRoles.includes(req.user.permission)) 
+        const hasPermission = isAdmin || permissions.some((role) => 
+        {
+            const roleMatch = req.user.permission === role;
+            const idMatch = idMatches(req);
+
+            return roleMatch && idMatch;
+        });
+
+        if (!hasPermission) 
         {
             // Status code 403: Forbidden
             return res.status(403).send("Access denied");

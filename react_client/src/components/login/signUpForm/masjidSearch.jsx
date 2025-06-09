@@ -37,8 +37,9 @@ const MasjidSearch = ({ onMasjidSelect }) =>
     const handleSelect = (masjid) => 
     {
         setName(masjid.FullName);
-        setShowDropdown(false);
         onMasjidSelect(masjid.ID);
+
+        setShowDropdown(false);
     };
 
     return (
@@ -52,7 +53,7 @@ const MasjidSearch = ({ onMasjidSelect }) =>
                     {masjids.map((masjid) => 
                     (
                         <li key={masjid.ID} className="p-2 cursor-pointer hover:bg-gray-100" onClick={() => handleSelect(masjid)}>
-                            {masjid.FullName}
+                            {masjid.FullName} ({masjid.AddressLine})
                         </li>
                     ))}
                 </ul>

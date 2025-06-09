@@ -45,12 +45,59 @@ app.post("/login/", isLoggedOut, async (req, res) =>
             return res.status(401).send("Password was incorrect. Try again.");
         }
 
-        const token = jwt.sign
-        (
+        let userData =            
+        {
+            id: user.ID,
+            permission: user.Permission
+        };
+
+        if (user.Permission === "Member")
+        {
+            const [memberResult] = await pool.execute
+            (
+                `SELECT * FROM Members WHERE ID = ?`,
+                [user.ID]
+            );
+
+            const member = memberResult[0];
+
+            userData = 
             {
                 id: user.ID,
                 permission: user.Permission,
-            },
+                masjid_id: member.Masjid_ID
+            };
+        }
+        else if (user.Permission === "Trustee")
+        {
+            const [trustResult] = await pool.execute
+            (
+                `SELECT * FROM Trustees WHERE ID = ?`,
+                [user.ID]
+            );
+
+            const trustee = trustResult[0];
+
+            const [masjidResult] = await pool.execute
+            (
+                `SELECT * FROM Masjids WHERE Trust_ID = ?`,
+                [trustee.Trust_ID]
+            );
+
+            const masjid = masjidResult[0];
+
+            userData = 
+            {
+                id: user.ID,
+                permission: user.Permission,
+                trust_id: trustee.Trust_ID,
+                masjid_id: masjid.ID
+            };
+        }
+
+        const token = jwt.sign
+        (
+            userData,
             process.env.JWT_SECRET,
             { expiresIn: "1d" }
         );
