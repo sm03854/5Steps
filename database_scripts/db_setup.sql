@@ -24,7 +24,8 @@ CREATE TABLE DailyMasjidStatistics
 	Statistics_ID		INT UNSIGNED NOT NULL,
 
 	PRIMARY KEY (ID),
-	FOREIGN KEY (Statistics_ID) REFERENCES MasjidStatistics(ID) ON DELETE CASCADE
+	FOREIGN KEY (Statistics_ID) REFERENCES MasjidStatistics(ID) ON DELETE CASCADE,
+	UNIQUE (CurrentDate, Statistics_ID)
 );
 
 CREATE TABLE PrayerMasjidStatistics
@@ -35,7 +36,8 @@ CREATE TABLE PrayerMasjidStatistics
 	Attendees			INT UNSIGNED NOT NULL,
 
 	PRIMARY KEY (ID),
-	FOREIGN KEY (Statistics_ID) REFERENCES DailyMasjidStatistics(ID) ON DELETE CASCADE
+	FOREIGN KEY (Statistics_ID) REFERENCES DailyMasjidStatistics(ID) ON DELETE CASCADE,
+	UNIQUE (Statistics_ID, Prayer)
 );
 
 
@@ -54,7 +56,8 @@ CREATE TABLE DailyUserStatistics
 	Statistics_ID		INT UNSIGNED NOT NULL,
 
 	PRIMARY KEY (ID),
-	FOREIGN KEY (Statistics_ID) REFERENCES UserStatistics(ID) ON DELETE CASCADE
+	FOREIGN KEY (Statistics_ID) REFERENCES UserStatistics(ID) ON DELETE CASCADE,
+	UNIQUE (CurrentDate, Statistics_ID)
 );
 
 CREATE TABLE PrayerUserStatistics
@@ -68,6 +71,45 @@ CREATE TABLE PrayerUserStatistics
 	PRIMARY KEY (ID),
 	FOREIGN KEY (Statistics_ID) REFERENCES DailyUserStatistics(ID) ON DELETE CASCADE,
 	UNIQUE (Statistics_ID, Prayer)
+);
+
+
+
+CREATE TABLE Timetables
+(
+	ID	          		INT UNSIGNED AUTO_INCREMENT NOT NULL,
+	CurrentMonth		INT UNSIGNED NOT NULL,
+	CurrentYear			INT UNSIGNED NOT NULL,
+
+	PRIMARY KEY (ID)
+);
+
+CREATE TABLE PrayerTimes
+(
+	ID	          		INT UNSIGNED AUTO_INCREMENT NOT NULL,
+	Timetable_ID		INT UNSIGNED NOT NULL,
+	Prayer				ENUM("Fajr", "Zuhr", "Asr", "Maghrib", "Isha") NOT NULL,
+	CurrentDay			INT UNSIGNED NOT NULL,
+	StartTime			TIME NOT NULL,
+	AdhanTime			TIME NOT NULL,
+	IqamahTime			TIME NOT NULL,
+
+	PRIMARY KEY (ID),
+	FOREIGN KEY (Timetable_ID) REFERENCES Timetables(ID) ON DELETE CASCADE,
+	UNIQUE (Timetable_ID, Prayer, CurrentDay)
+);
+
+CREATE TABLE ExtraTimes
+(
+	ID	          		INT UNSIGNED AUTO_INCREMENT NOT NULL,
+	Timetable_ID		INT UNSIGNED NOT NULL,
+	Extra				ENUM("Sunrise") NOT NULL,
+	CurrentDay			INT UNSIGNED NOT NULL,
+	CurrentTime			TIME NOT NULL,
+
+	PRIMARY KEY (ID),
+	FOREIGN KEY (Timetable_ID) REFERENCES Timetables(ID) ON DELETE CASCADE,
+	UNIQUE (Timetable_ID, Extra, CurrentDay)
 );
 
 
@@ -90,49 +132,12 @@ CREATE TABLE Masjids
 	Longitude			DECIMAL(12, 8) NOT NULL,
 	Trust_ID			INT UNSIGNED NOT NULL,
 	Statistics_ID		INT UNSIGNED NOT NULL,
+	Timetable_ID		INT UNSIGNED NOT NULL,
 
 	PRIMARY KEY (ID),
 	FOREIGN KEY (Trust_ID) REFERENCES Trusts(ID) ON DELETE RESTRICT,
-	FOREIGN KEY (Statistics_ID) REFERENCES MasjidStatistics(ID) ON DELETE RESTRICT
-);
-
-
-
-CREATE TABLE Timetables
-(
-	ID	          		INT UNSIGNED AUTO_INCREMENT NOT NULL,
-	CurrentMonth		INT UNSIGNED NOT NULL,
-	CurrentYear			INT UNSIGNED NOT NULL,
-	Masjid_ID			INT UNSIGNED NOT NULL,
-
-	PRIMARY KEY (ID),
-	FOREIGN KEY (Masjid_ID) REFERENCES Masjids(ID)
-);
-
-CREATE TABLE PrayerTimes
-(
-	ID	          		INT UNSIGNED AUTO_INCREMENT NOT NULL,
-	Timetable_ID		INT UNSIGNED NOT NULL,
-	Prayer				ENUM("Fajr", "Zuhr", "Asr", "Maghrib", "Isha") NOT NULL,
-	CurrentDay			INT UNSIGNED NOT NULL,
-	StartTime			TIME NOT NULL,
-	AdhanTime			TIME NOT NULL,
-	IqamahTime			TIME NOT NULL,
-
-	PRIMARY KEY (ID),
-	FOREIGN KEY (Timetable_ID) REFERENCES Timetables(ID) ON DELETE CASCADE
-);
-
-CREATE TABLE ExtraTimes
-(
-	ID	          		INT UNSIGNED AUTO_INCREMENT NOT NULL,
-	Timetable_ID		INT UNSIGNED NOT NULL,
-	Extra				ENUM("Sunrise") NOT NULL,
-	CurrentDay			INT UNSIGNED NOT NULL,
-	CurrentTime			TIME NOT NULL,
-
-	PRIMARY KEY (ID),
-	FOREIGN KEY (Timetable_ID) REFERENCES Timetables(ID) ON DELETE CASCADE
+	FOREIGN KEY (Statistics_ID) REFERENCES MasjidStatistics(ID) ON DELETE RESTRICT,
+	FOREIGN KEY (Timetable_ID) REFERENCES Timetables(ID) ON DELETE RESTRICT
 );
 
 
@@ -216,26 +221,26 @@ INSERT INTO PrayerUserStatistics VALUES
 
 
 
+INSERT INTO Timetables VALUES
+(1001, 6, 2025);
+
+INSERT INTO PrayerTimes VALUES
+(1000001, 1001, "Fajr", 1, "02:59:00", "03:45:00", "04:00:00"),
+(1000002, 1001, "Zuhr", 1, "13:07:00", "13:15:00", "13:30:00"),
+(1000003, 1001, "Asr", 1, "18:34:00", "19:15:00", "19:30:00"),
+(1000004, 1001, "Maghrib", 1, "21:14:00", "21:14:00", "21:14:00"),
+(1000005, 1001, "Isha", 1, "22:18:00", "22:25:00", "22:40:00");
+
+INSERT INTO ExtraTimes VALUES
+(1000001, 1001, "Sunrise", 1, "04:53:00");
+
+
+
 INSERT INTO Trusts VALUES
 (1001);
 
 INSERT INTO Masjids VALUES
-(1001, "Abu Bakr Masjid", "RG30 1AF", "330 Oxford Rd, Reading", "info@abmreading.org", 51.457009, -0.996256, 1001, 1001);
-
-
-
-INSERT INTO Timetables VALUES
-(1000001, 6, 2025, 1001);
-
-INSERT INTO PrayerTimes VALUES
-(1000001, 1000001, "Fajr", 1, "02:59:00", "03:45:00", "04:00:00"),
-(1000002, 1000001, "Zuhr", 1, "13:07:00", "13:15:00", "13:30:00"),
-(1000003, 1000001, "Asr", 1, "18:34:00", "19:15:00", "19:30:00"),
-(1000004, 1000001, "Maghrib", 1, "21:14:00", "21:14:00", "21:14:00"),
-(1000005, 1000001, "Isha", 1, "22:18:00", "22:25:00", "22:40:00");
-
-INSERT INTO ExtraTimes VALUES
-(1000001, 1000001, "Sunrise", 1, "04:53:00");
+(1001, "Abu Bakr Masjid", "RG30 1AF", "330 Oxford Rd, Reading", "info@abmreading.org", 51.457009, -0.996256, 1001, 1001, 1001);
 
 
 
