@@ -1,27 +1,91 @@
-<!--TODO:-->
-
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Edit Masjid</title>
+    <title>Edit Masjid Timetable</title>
  </head>
   <body>
-    <h1>Edit details for your Masjid:</h1>
-    <form action="/api/masjids/<%= id %>/edit/" method="POST">
-      <label for="name">Full Name: </label>
-      <input type='text' id='name' name="name" value="<%= name %>" placeholder="Enter your masjid name..">
+    <h1>Edit times for your Masjid timetable:</h1>
+    <form action="/api/masjids/<%= id %>/timetable/edit/" method="POST">
+      <label for="month">Month: </label>
+      <input type='number' id='month' name="month" value="<%= month %>" placeholder="Enter current month..">
       <br><br>
 
-      <label for="name">Postcode: </label>
-      <input type='text' id='postcode' name="postcode" value="<%= postcode %>" placeholder="Enter your masjid postcode..">
+      <label for="year">Year: </label>
+      <input type='number' id='year' name="year" value="<%= year %>" placeholder="Enter current year..">
       <br><br>
 
-      <label for="name">Address: </label>
-      <input type='text' id='address' name="address" value="<%= address %>" placeholder="Enter your masjid address..">
-      <br><br>
+      <table border="1" style="width: 100%; border-collapse: collapse; text-align: center;">
+        <thead>
+          <tr>
+            <th rowspan="2">Day</th>
+            <th colspan="3">Fajr</th>
+            <th rowspan="2">Sunrise</th>
+            <th colspan="3">Zuhr</th>
+            <th colspan="3">Asr</th>
+            <th colspan="3">Maghrib</th>
+            <th colspan="3">Isha</th>
+          </tr>
+          <tr>
+            <th>Start</th>
+            <th>Adhan</th>
+            <th>Iqamah</th>
+            <th>Start</th>
+            <th>Adhan</th>
+            <th>Iqamah</th>
+            <th>Start</th>
+            <th>Adhan</th>
+            <th>Iqamah</th>
+            <th>Start</th>
+            <th>Adhan</th>
+            <th>Iqamah</th>
+            <th>Start</th>
+            <th>Adhan</th>
+            <th>Iqamah</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% for (let i = 0; i < daysInMonth; i++) { %>
+            <% const currentDayNum = i + 1; %>
+            <% const dayData = prayerTimesMap.get(currentDayNum) || {}; %>
+            <tr>
+              <!-- Day -->
+              <td>
+                Day <%= currentDayNum %>
+                <input type="hidden" name="prayer_times[<%= i %>][CurrentDay]" value="<%= currentDayNum %>">
+              </td>
 
-      <label for="email">Email: </label>
-      <input type='email' id='email' name="email" value="<%= email %>" placeholder="Enter your masjid email..">
+              <!-- Fajr -->
+              <td><input type="time" name="prayer_times[<%= i %>][Fajr_StartTime]" value="<%= dayData.Fajr_StartTime || '' %>" required></td>
+              <td><input type="time" name="prayer_times[<%= i %>][Fajr_AdhanTime]" value="<%= dayData.Fajr_AdhanTime || '' %>" required></td>
+              <td><input type="time" name="prayer_times[<%= i %>][Fajr_IqamahTime]" value="<%= dayData.Fajr_IqamahTime || '' %>" required></td>
+
+              <!-- Sunrise -->
+              <td><input type="time" name="prayer_times[<%= i %>][Sunrise_Time]" value="<%= dayData.Sunrise_Time || '' %>" required></td>
+
+              <!-- Zuhr -->
+              <td><input type="time" name="prayer_times[<%= i %>][Zuhr_StartTime]" value="<%= dayData.Zuhr_StartTime || '' %>" required></td>
+              <td><input type="time" name="prayer_times[<%= i %>][Zuhr_AdhanTime]" value="<%= dayData.Zuhr_AdhanTime || '' %>" required></td>
+              <td><input type="time" name="prayer_times[<%= i %>][Zuhr_IqamahTime]" value="<%= dayData.Zuhr_IqamahTime || '' %>" required></td>
+
+              <!-- Asr -->
+              <td><input type="time" name="prayer_times[<%= i %>][Asr_StartTime]" value="<%= dayData.Asr_StartTime || '' %>" required></td>
+              <td><input type="time" name="prayer_times[<%= i %>][Asr_AdhanTime]" value="<%= dayData.Asr_AdhanTime || '' %>" required></td>
+              <td><input type="time" name="prayer_times[<%= i %>][Asr_IqamahTime]" value="<%= dayData.Asr_IqamahTime || '' %>" required></td>
+
+              <!-- Maghrib -->
+              <td><input type="time" name="prayer_times[<%= i %>][Maghrib_StartTime]" value="<%= dayData.Maghrib_StartTime || '' %>" required></td>
+              <td><input type="time" name="prayer_times[<%= i %>][Maghrib_AdhanTime]" value="<%= dayData.Maghrib_AdhanTime || '' %>" required></td>
+              <td><input type="time" name="prayer_times[<%= i %>][Maghrib_IqamahTime]" value="<%= dayData.Maghrib_IqamahTime || '' %>" required></td>
+
+              <!-- Isha -->
+              <td><input type="time" name="prayer_times[<%= i %>][Isha_StartTime]" value="<%= dayData.Isha_StartTime || '' %>" required></td>
+              <td><input type="time" name="prayer_times[<%= i %>][Isha_AdhanTime]" value="<%= dayData.Isha_AdhanTime || '' %>" required></td>
+              <td><input type="time" name="prayer_times[<%= i %>][Isha_IqamahTime]" value="<%= dayData.Isha_IqamahTime || '' %>" required></td>
+            </tr>
+          <% } %>
+        </tbody>
+      </table>
+
       <br><br>
 
       <button type="submit">Update Masjid details</button>

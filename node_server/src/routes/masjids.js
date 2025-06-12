@@ -521,14 +521,17 @@ app.get("/:id/timetable/edit", isLoggedIn, requirePermissions((req) => req.user.
 			ORDER BY pt.CurrentDay`,
 			[masjid.Timetable_ID]
 		);
+
+		const prayerTimesMap = new Map();
+		prayers.forEach(prayerData => prayerTimesMap.set(prayerData.CurrentDay, prayerData));
 	
 		return res.render("masjid/timetable",
 		{
 			id: id,
-			days: days,
+			daysInMonth: days,
 			month: timetable.CurrentMonth,
 			year: timetable.CurrentYear,
-			prayers: prayers
+			prayerTimesMap: prayerTimesMap
 		});
 	}
 	catch (error)
@@ -543,7 +546,7 @@ app.post("/:id/timetable/edit/", isLoggedIn, requirePermissions((req) => req.use
 {	
 	const { id } = req.params;
 
-    const { month, year, prayers } = req.body;
+    const { month, year, prayer_times } = req.body;
 
 	try
 	{
@@ -562,37 +565,40 @@ app.post("/:id/timetable/edit/", isLoggedIn, requirePermissions((req) => req.use
 				[month, year, timetableID]
 			);
 
-			prayers.forEach(async data => 
+			prayer_times.forEach(async data => 
 			{
 				await pool.execute
 				(
 					`INSERT INTO PrayerTimes (Timetable_ID, Prayer, CurrentDay, StartTime, AdhanTime, IqamahTime)
-            		VALUES ?
+            		VALUES 
+					(?, ?, ?, ?, ?, ?),
+					(?, ?, ?, ?, ?, ?),
+					(?, ?, ?, ?, ?, ?),
+					(?, ?, ?, ?, ?, ?),
+					(?, ?, ?, ?, ?, ?)
             		ON DUPLICATE KEY UPDATE
                 	StartTime = VALUES(StartTime),
                 	AdhanTime = VALUES(AdhanTime),
                 	IqamahTime = VALUES(IqamahTime);`,
 					[
-						[timetableID, 'Fajr', data.CurrentDay, data.Fajr_StartTime, data.Fajr_AdhanTime, data.Fajr_IqamahTime],
-						[timetableID, 'Zuhr', data.currentDay, data.Zuhr_StartTime, data.Zuhr_AdhanTime, data.Zuhr_IqamahTime],
-						[timetableID, 'Asr', data.currentDay, data.Asr_StartTime, data.Asr_AdhanTime, data.Asr_IqamahTime],
-						[timetableID, 'Maghrib', data.currentDay, data.Maghrib_StartTime, data.Maghrib_AdhanTime, data.Maghrib_IqamahTime],
-						[timetableID, 'Isha', data.currentDay, data.Isha_StartTime, data.Isha_AdhanTime, data.Isha_IqamahTime]
+						timetableID, 'Fajr', data.CurrentDay, data.Fajr_StartTime, data.Fajr_AdhanTime, data.Fajr_IqamahTime,
+						timetableID, 'Zuhr', data.CurrentDay, data.Zuhr_StartTime, data.Zuhr_AdhanTime, data.Zuhr_IqamahTime,
+						timetableID, 'Asr', data.CurrentDay, data.Asr_StartTime, data.Asr_AdhanTime, data.Asr_IqamahTime,
+						timetableID, 'Maghrib', data.CurrentDay, data.Maghrib_StartTime, data.Maghrib_AdhanTime, data.Maghrib_IqamahTime,
+						timetableID, 'Isha', data.CurrentDay, data.Isha_StartTime, data.Isha_AdhanTime, data.Isha_IqamahTime
 					]
 				);
 
 				await pool.execute
 				(
 					`INSERT INTO ExtraTimes (Timetable_ID, Extra, CurrentDay, CurrentTime)
-            		VALUES ?
+            		VALUES (?, ?, ?, ?)
             		ON DUPLICATE KEY UPDATE
                 	CurrentTime = VALUES(CurrentTime);`,
-					[
-						[timetableID, 'Sunrise', data.currentDay, data.Sunrise_Time]
-					]
+					[timetableID, 'Sunrise', data.CurrentDay, data.Sunrise_Time]
 				);
 			});
-		});
+        });
 
 		return res.status(200).send("Masjid timetable updated successfully!");
 	}
