@@ -55,10 +55,16 @@
             "description" : "Deletes member data by id",
             "permission" : "Member/Admin"
         },
-        "/api/members/:id/stats/:date/:prayer":
+        "/api/members/:id/:date/:prayer/stats":
         {
             "method" : "GET",
             "description" : "Retrieves prayer data for a member by id on a given date for a specific prayer",
+            "permission" : "Member/Admin"
+        },
+        "/api/members/:id/:date/:prayer/log":
+        {
+            "method" : "GET/PUT",
+            "description" : "Logs prayer data for a member by id on a given date for a specific prayer",
             "permission" : "Member/Admin"
         }
     },
@@ -126,6 +132,69 @@
             "method" : "GET/PUT",
             "description" : "Deletes admin data by id",
             "permission" : "Admin"
+        }
+    },
+    "Masjids":
+    {
+        "/api/masjids/":
+        {
+            "method" : "GET",
+            "description" : "Gets data of all masjids",
+            "permission" : "Any"
+        },
+        "/api/masjids/search?name=...": 
+        {
+            "method" : "GET",
+            "description" : "Gets list of all masjids with similar names to 'name' parameter",
+            "permission" : "Any"
+        },
+        "/api/masjids/new/": 
+        {
+            "method" : "GET/POST",
+            "description" : "Create a new masjid",
+            "permission" : "Admin"
+        },
+        "/api/masjids/:id/":
+        {
+            "method" : "GET",
+            "description" : "Gets data of a masjid by id",
+            "permission" : "Any"
+        },
+        "/api/masjids/:id/members/":
+        {
+            "method" : "GET",
+            "description" : "Gets data of all members of a masjid by id",
+            "permission" : "Any"
+        },
+        "/api/masjids/:id/trustees":
+        {
+            "method" : "GET",
+            "description" : "Gets data of all trustees of a masjid by id",
+            "permission" : "Any"
+        },
+        "/api/masjids/:id/edit/":
+        {
+            "method" : "GET/PUT",
+            "description" : "Updates masjid data by id",
+            "permission" : "Admin"
+        },
+        "/api/masjids/:id/:date/:prayer/stats":
+        {
+            "method" : "GET",
+            "description" : "Retrieves prayer data for a masjid by id on a given date for a specific prayer",
+            "permission" : "Trustee/Admin"
+        },
+        "/api/masjids/:id/timetable/":
+        {
+            "method" : "GET",
+            "description" : "Retrieves prayer times of masjid timetable for latest month",
+            "permission" : "Any"
+        },
+        "/api/masjids/:id/timetable/edit/":
+        {
+            "method" : "GET/PUT",
+            "description" : "Updates masjid timetable data by id",
+            "permission" : "Trustee/Admin"
         }
     }
 }
